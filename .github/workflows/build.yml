@@ -1,0 +1,29 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+    - name: Restore dependencies
+      run: dotnet restore -p:Configuration=Release
+    - name: Build
+      run: dotnet build --no-restore -p:Configuration=Release
+    - name: Pack
+      run: dotnet pack -p:Configuration=Release
+    - name: Publish to NuGet
+      run: dotnet nuget push XclParser/bin/Release/XclParser.1.0.6.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+    - uses: actions/upload-artifact@v3
+      with:
+        name: XclParser.1.0.6.nupkg
+        path: XclParser/bin/Release/XclParser.1.0.6.nupkg

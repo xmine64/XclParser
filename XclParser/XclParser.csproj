@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>9.0</LangVersion>
+        <AssemblyName>XclParser</AssemblyName>
+        <AssemblyVersion>1.0.6.0</AssemblyVersion>
+        <VersionPrefix>1.0.6</VersionPrefix>
+        <Nullable>warnings</Nullable>
+    </PropertyGroup>
+    
+    <!-- NuGet Properties -->
+    <PropertyGroup>
+        <PackageId>XclParser</PackageId>
+        <Authors>Minusium</Authors>
+        <Description>eXtendable Config Language Parser</Description>
+        <PackageProjectUrl>https://github.com/minusium/XclParser</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/minusium/XclParser</RepositoryUrl>
+        <PackageTags>parser;config;xcl</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
+</Project>

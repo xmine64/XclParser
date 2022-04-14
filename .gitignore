@@ -1,0 +1,11 @@
+.vs/
+bin/
+obj/
+*.csproj.user
+*.wapproj.user
+*.DotSettings.user
+packages/
+*.pubxml.user
+AppPackages/
+BundleArtifacts/
+Release/

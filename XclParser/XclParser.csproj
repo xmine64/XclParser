@@ -3,8 +3,8 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>9.0</LangVersion>
         <AssemblyName>XclParser</AssemblyName>
-        <AssemblyVersion>1.0.6.0</AssemblyVersion>
-        <VersionPrefix>1.0.6</VersionPrefix>
+        <AssemblyVersion>1.0.7.1</AssemblyVersion>
+        <VersionPrefix>1.0.7</VersionPrefix>
         <Nullable>warnings</Nullable>
     </PropertyGroup>
     

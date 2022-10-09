@@ -58,13 +58,15 @@ namespace XclParser.Tokenizer
                     or Lexer.TokenType.NewLine)
                 {
                     AddToken(TokenType.Meaningless);
+                    _position++;
                 }
                 else
                 {
-                    break;
+                    return;
                 }
-                _position++;
             }
+
+            throw new UnexpectedEndOfFile(Data[_position - 1]);
         }
 
         private void AddToken(TokenType type)
@@ -94,7 +96,7 @@ namespace XclParser.Tokenizer
 
                 SkipSpace();
             }
-            
+
             if (CurrentToken.Type == Lexer.TokenType.Operator && CurrentToken.Data == "{")
             {
                 AddToken(TokenType.SectionStart);

@@ -81,10 +81,8 @@ namespace XclParser
 
         internal IEnumerable<Token> GenerateTokens()
         {
-            // use parsed tokens if all dirty fields are present in it
-            if (Tokens != null && _dirtyFields.All(
-                field => Tokens.Any(
-                    token => token.Type == TokenType.FieldName && token.Data == field.Name)))
+            // use parsed tokens if there's no dirty field in it
+            if (Tokens != null && Tokens.All(token => token.Type == TokenType.FieldName && _dirtyFields.All(field => field.Name != token.Data)))
             {
                 _dirtyFields.Clear();
                 return Tokens;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
+using System.Runtime.CompilerServices;
 using XclParser.Reflection;
 using XclParser.Tokenizer;
 
@@ -60,11 +60,17 @@ namespace XclParser
                 var fieldValue = fieldType.ToXclValue(type.GetFieldValue(this, pair.Key));
                 if (pair.Value.Name == null)
                 {
+                    var xclValueType = pair.Value.Value.GetType();
+#if NET
+                    object defaultValue = xclValueType.IsValueType ? RuntimeHelpers.GetUninitializedObject(xclValueType) : null;
+#else
                     static T GetDefault<T>() => default(T);
-                    var defaultValue = ((Func<object>)GetDefault<object>).Method
+                    var defaultValue = !xclValueType.IsValueType ? null 
+                        : ((Func<object>)GetDefault<object>).Method
                         .GetGenericMethodDefinition()
                         .MakeGenericMethod(pair.Value.Value.GetType())
                         .Invoke(null, null);
+#endif
                     if (!fieldValue.Value.Equals(defaultValue))
                     {
                         _dirtyFields.Add(pair.Key);

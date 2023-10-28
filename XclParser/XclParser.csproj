@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
-        <LangVersion>9.0</LangVersion>
+        <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
         <AssemblyName>XclParser</AssemblyName>
         <AssemblyVersion>1.0.8.2</AssemblyVersion>
         <VersionPrefix>1.0.8</VersionPrefix>
         <Nullable>warnings</Nullable>
+		<IsAotCompatible Condition="$(TargetFramework) == 'net6.0'">true</IsAotCompatible>
     </PropertyGroup>
     
     <!-- NuGet Properties -->

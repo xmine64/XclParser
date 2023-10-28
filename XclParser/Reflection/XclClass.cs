@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -22,6 +23,16 @@ namespace XclParser.Reflection
             return null;
         }
 
+#if NET
+        [DynamicallyAccessedMembers(
+            DynamicallyAccessedMemberTypes.NonPublicFields |
+            DynamicallyAccessedMemberTypes.NonPublicProperties |
+            DynamicallyAccessedMemberTypes.PublicFields |
+            DynamicallyAccessedMemberTypes.PublicProperties |
+            DynamicallyAccessedMemberTypes.NonPublicConstructors |
+            DynamicallyAccessedMemberTypes.PublicConstructors
+        )]
+#endif
         private readonly Type _type;
         private readonly Dictionary<string, XclField> _fields;
         private readonly Dictionary<XclField, MemberInfo> _fieldsMap;
@@ -34,14 +45,25 @@ namespace XclParser.Reflection
             _fields = fields.ToDictionary(field => field.Name, field => field);
         }
 
-        internal XclClass(Context context, string name, Type type) : base(name)
+        internal XclClass(Context context, string name,
+#if NET
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicFields | 
+            DynamicallyAccessedMemberTypes.NonPublicProperties | 
+            DynamicallyAccessedMemberTypes.PublicFields | 
+            DynamicallyAccessedMemberTypes.PublicProperties | 
+            DynamicallyAccessedMemberTypes.NonPublicConstructors | 
+            DynamicallyAccessedMemberTypes.PublicConstructors)]
+#endif
+        Type type) : base(name)
         {
             _fields = new();
             _fieldsMap = new();
             _type = type;
             Context = context;
 
-            _parameterField = type.GetMembers().FirstOrDefault(member => member.IsDefined(typeof(XclParameterAttribute)));
+            var fieldsAndProperties = Enumerable.Concat<MemberInfo>(type.GetFields(), type.GetProperties());
+
+            _parameterField = fieldsAndProperties.FirstOrDefault(member => member.IsDefined(typeof(XclParameterAttribute)));
             ParameterType = _parameterField == null ? null : Context.TypeMap.GetXclType(GetFieldOrPropertyType(_parameterField));
 
             _constructor = type.GetConstructors().FirstOrDefault(ctor => ctor.IsDefined(typeof(XclConstructorAttribute), false));
@@ -49,12 +71,12 @@ namespace XclParser.Reflection
             if (parameters?.Length > 1)
                 throw new RuntimeError(null, $"Error in registring type {name}, only one parameter supported in constructor.");
             if (parameters?.Length == 1 && parameters[0].ParameterType != GetFieldOrPropertyType(_parameterField))
-                throw new RuntimeError(null, $"Error in registring type {name}, constructor should have parameter of type {ParameterType.Name}.");
+                throw new RuntimeError(null, $"Error in registring type {name}, constructor should have parameter of type {ParameterType?.Name}.");
 
-            foreach (var member in type.GetMembers().Where(
+            foreach (var member in fieldsAndProperties.Where(
                 member => member.IsDefined(typeof(XclFieldAttribute), false)))
             {
-                var fieldName = member.GetCustomAttribute<XclFieldAttribute>().Name ?? member.Name;
+                var fieldName = member.GetCustomAttribute<XclFieldAttribute>()!.Name ?? member.Name;
                 var fieldType = Context.TypeMap.GetXclType(GetFieldOrPropertyType(member));
                 var field = new XclField(fieldName, fieldType);
                 _fields.Add(fieldName, field);

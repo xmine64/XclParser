@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -51,7 +52,16 @@ namespace XclParser
             _typeMap.Add(type, xclType);
         }
 
-        public void RegisterClass(Type type)
+        public void RegisterClass(
+#if NET
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicFields |
+            DynamicallyAccessedMemberTypes.NonPublicProperties |
+            DynamicallyAccessedMemberTypes.PublicFields |
+            DynamicallyAccessedMemberTypes.PublicProperties |
+            DynamicallyAccessedMemberTypes.NonPublicConstructors |
+            DynamicallyAccessedMemberTypes.PublicConstructors)]
+#endif
+        Type type)
         {
             if (!type.IsClass)
                 throw new RuntimeError(null, "Given type is not a class.");
